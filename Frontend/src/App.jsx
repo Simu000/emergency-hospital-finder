@@ -11,7 +11,6 @@ import {
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// ─── ICONS ──────────────────────────────────────────────────────────────────
 
 const userIcon = new L.DivIcon({
   html: `<div style="
@@ -34,13 +33,12 @@ const makeHospitalIcon = (selected = false) =>
       box-shadow:${selected ? "0 0 0 4px rgba(192,57,43,0.25)," : ""}0 2px 8px rgba(0,0,0,0.25);
       font-size:${selected ? 17 : 14}px;
       transition:all 0.2s;
-    ">🏥</div>`,
+    "></div>`,
     iconSize: [selected ? 36 : 30, selected ? 36 : 30],
     iconAnchor: [selected ? 18 : 15, selected ? 18 : 15],
     className: "",
   });
 
-// ─── MAP UTILS ───────────────────────────────────────────────────────────────
 
 function RecenterMap({ location, zoom }) {
   const map = useMap();
@@ -58,7 +56,6 @@ function FitBounds({ bounds }) {
   return null;
 }
 
-// ─── DISTANCE ────────────────────────────────────────────────────────────────
 
 const calcDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
@@ -82,7 +79,6 @@ const mockBeds = () => {
 const mockContact = () =>
   `+91-9${Math.floor(100000000 + Math.random() * 900000000)}`;
 
-// ─── BED STATUS ───────────────────────────────────────────────────────────────
 
 function BedStatus({ beds }) {
   if (beds === null)
@@ -96,7 +92,6 @@ function BedStatus({ beds }) {
   return <span className="beds-low">🛏 Only {beds} beds left</span>;
 }
 
-// ─── FETCH ROUTE (OSRM) ───────────────────────────────────────────────────────
 
 async function fetchRoute(from, to) {
   try {
@@ -118,7 +113,6 @@ async function fetchRoute(from, to) {
   return null;
 }
 
-// ─── APP ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
   const [hospitals, setHospitals] = useState([]);
@@ -132,7 +126,6 @@ export default function App() {
 
   const selectedHospital = hospitals.find((h) => h.id === selectedId);
 
-  // ── Find hospitals ──────────────────────────────────────────────────────────
   const findHospitals = () => {
     setLoading(true);
     setSelectedId(null);
@@ -188,7 +181,6 @@ export default function App() {
     );
   };
 
-  // ── Select hospital & fetch route ───────────────────────────────────────────
   const selectHospital = async (h) => {
     if (selectedId === h.id) {
       // Deselect
@@ -206,11 +198,9 @@ export default function App() {
       setRoute(routeData);
       setRouteLoading(false);
 
-      // Fit map to show both points
       setFitBounds([userLocation, [h.lat, h.lon]]);
     }
 
-    // Scroll card into view
     setTimeout(() => {
       cardRefs.current[h.id]?.scrollIntoView({
         behavior: "smooth",
@@ -232,11 +222,10 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* ── HEADER ─────────────────────────────────────────────────── */}
       <div className="header">
         <div className="header-title">
           <div>
-            <h1>🚑 Emergency Hospital Finder</h1>
+            <h1>Emergency Hospital Finder</h1>
             <p className="tagline">Real-time nearby hospitals · Bed availability · Directions</p>
           </div>
         </div>
@@ -252,16 +241,13 @@ export default function App() {
         </div>
       </div>
 
-      {/* ── LOADING BAR ────────────────────────────────────────────── */}
       {(loading || routeLoading) && (
         <div className="loading-bar">
           <div className="loading-bar-inner" />
         </div>
       )}
 
-      {/* ── MAIN LAYOUT ────────────────────────────────────────────── */}
       <div className="layout">
-        {/* MAP */}
         <MapContainer
           center={userLocation || [28.6, 77.2]}
           zoom={13}
@@ -278,7 +264,6 @@ export default function App() {
 
           {fitBounds && <FitBounds bounds={fitBounds} />}
 
-          {/* User marker */}
           {userLocation && (
             <Marker position={userLocation} icon={userIcon}>
               <Popup>
@@ -289,7 +274,6 @@ export default function App() {
             </Marker>
           )}
 
-          {/* Route polyline */}
           {route && (
             <Polyline
               positions={route.coords}
@@ -304,7 +288,6 @@ export default function App() {
             />
           )}
 
-          {/* Hospital markers */}
           {visibleHospitals.map((h) => (
             <Marker
               key={h.id}
@@ -333,7 +316,6 @@ export default function App() {
           ))}
         </MapContainer>
 
-        {/* SIDEBAR */}
         <div className="dashboard">
           <div className="sidebar-header">
             {selectedId !== null ? (
