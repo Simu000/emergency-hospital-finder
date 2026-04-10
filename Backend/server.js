@@ -15,7 +15,7 @@ function generateMockHospitals() {
     hospitals.push({
       id: i,
       name: `Hospital ${i}`,
-      availableBeds: Math.floor(Math.random() * 50), // 0–49 beds
+      availableBeds: Math.floor(Math.random() * 50),
       emergencyContact: `+91-98${Math.floor(10000000 + Math.random() * 90000000)}`
     });
   }
@@ -27,6 +27,11 @@ function generateMockHospitals() {
 app.get("/hospitals/mock", (req, res) => {
   const data = generateMockHospitals();
   res.json(data);
+});
+
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 // Root route (for testing)
