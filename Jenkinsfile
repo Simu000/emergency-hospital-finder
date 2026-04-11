@@ -13,16 +13,35 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Backend Dependencies') {
             steps {
-                bat 'npm ci || npm install'
-                echo "✅ Dependencies installed"
+                bat '''
+                    cd Backend
+                    npm ci || npm install
+                    cd ..
+                '''
+                echo "✅ Backend dependencies installed"
+            }
+        }
+
+        stage('Install Frontend Dependencies') {
+            steps {
+                bat '''
+                    cd Frontend
+                    npm ci || npm install
+                    cd ..
+                '''
+                echo "✅ Frontend dependencies installed"
             }
         }
 
         stage('Build Frontend') {
             steps {
-                bat 'npm run build'
+                bat '''
+                    cd Frontend
+                    npm run build
+                    cd ..
+                '''
                 echo "✅ Frontend built"
             }
         }
@@ -62,6 +81,7 @@ pipeline {
         stage('Deploy to Claw.cloud') {
             steps {
                 echo "✅ Deployment triggered to Claw.cloud"
+                echo "Claw.cloud will automatically pull the latest image"
                 echo "App URL: https://hospital-finder-xxxx.claw.cloud"
             }
         }
