@@ -2,14 +2,26 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'simu2006/hospital-finder'
-        DOCKER_TAG = "${env.BUILD_NUMBER}"
         CLAW_URL = 'https://irkihajmnyme.ap-southeast-1.clawcloudrun.com'
-        // Replace with YOUR NEW PAT - no spaces!
-        DOCKER_PAT = 'dckr_pat_oQy61sW6s3Vcjh8tziwJmDzMhFM'
     }
 
     stages {
+        stage('Load Environment') {
+            steps {
+                script {
+                    // Read .env file
+                    def envFile = readFile('.env')
+                    envFile.split('\n').each { line ->
+                        def (key, value) = line.trim().split('=', 2)
+                        if (key && value) {
+                            env[key] = value
+                        }
+                    }
+                }
+                echo '✅ Environment variables loaded'
+            }
+        }
+        
         stage('Build') {
             steps {
                 echo '🔨 Building application...'
@@ -20,7 +32,7 @@ pipeline {
                     bat 'npm install'
                     bat 'npm run build'
                 }
-                bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} -t ${DOCKER_IMAGE}:latest ."
+                bat "docker build -t ${env.DOCKER_IMAGE}:${env.BUILD_NUMBER} -t ${env.DOCKER_IMAGE}:latest ."
                 echo '✅ Build completed'
             }
         }
@@ -57,13 +69,13 @@ pipeline {
             steps {
                 echo '🚀 Deploying to Docker Hub...'
                 script {
-                    // Use a file to avoid pipe issues
+                    // Create temp file with PAT from .env
                     bat """
-                        echo ${DOCKER_PAT} > docker_pass.txt
-                        docker login -u simu2006 --password-stdin < docker_pass.txt
+                        echo ${env.DOCKER_PAT} > docker_pass.txt
+                        docker login -u ${env.DOCKER_USERNAME} --password-stdin < docker_pass.txt
                         if %errorlevel% equ 0 (
-                            docker push ${DOCKER_IMAGE}:latest
-                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                            docker push ${env.DOCKER_IMAGE}:latest
+                            docker push ${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}
                             echo Push completed
                         ) else (
                             echo Login failed
@@ -84,7 +96,7 @@ pipeline {
                     def releaseTag = "release-${env.BUILD_NUMBER}"
                     bat "git tag ${releaseTag}"
                     bat "git push origin ${releaseTag} || echo 'Tag push skipped'"
-                    writeFile file: 'release-notes.txt', text: "Release: ${releaseTag}\nImage: ${DOCKER_IMAGE}:${DOCKER_TAG}\nDate: ${new Date()}"
+                    writeFile file: 'release-notes.txt', text: "Release: ${releaseTag}\nImage: ${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}\nDate: ${new Date()}"
                     archiveArtifacts artifacts: 'release-notes.txt'
                 }
                 echo '✅ Release completed'
