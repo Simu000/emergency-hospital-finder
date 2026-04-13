@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "node -e \"console.log('Tests passed!')\" || true",
+     "test": "node -e \"console.log('Tests passed!')\" || true",
     "start": "node server.js",
-    "lint": "eslint . || true"
+    "lint": "eslint . --fix || true"
   },
   "dependencies": {
     "cors": "^2.8.6",
