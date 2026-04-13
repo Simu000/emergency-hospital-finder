@@ -52,19 +52,14 @@ pipeline {
         // STAGE 4: SECURITY - Trivy vulnerability scan
         stage('Security') {
             steps {
-                echo '🔒 Running security vulnerability scan...'
+                echo '🔒 Running security vulnerability scan with Trivy...'
                 script {
-                    // Pull the known good version (0.69.3)
-                    bat 'docker pull aquasec/trivy:0.69.3 || echo "Pull failed"'
-                    
-                    // Scan your image
-                    bat "docker run --rm aquasec/trivy:0.69.3 image --severity HIGH,CRITICAL --exit-code 0 ${DOCKER_IMAGE}:latest || echo 'Scan completed'"
-                    
-                    echo '✅ Security stage completed'
+                    // Use local Trivy installation
+                    bat 'C:\\trivy\\trivy.exe image --severity HIGH,CRITICAL --exit-code 0 simu2006/hospital-finder:latest || echo "Scan completed with findings"'
+                    echo '✅ Security stage completed - Trivy scan finished'
                 }
             }
         }
-        
         // STAGE 5: DEPLOY - Deploy to Docker Hub (staging)
         stage('Deploy') {
             steps {
