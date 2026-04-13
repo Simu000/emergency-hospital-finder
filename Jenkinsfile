@@ -6,7 +6,7 @@ pipeline {
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         CLAW_URL = 'https://irkihajmnyme.ap-southeast-1.clawcloudrun.com'
         // Replace with YOUR NEW PAT - no spaces!
-        DOCKER_PAT = 'dckr_pat_YOUR_NEW_TOKEN_HERE'
+        DOCKER_PAT = 'dckr_pat_oQy61sW6s3Vcjh8tziwJmDzMhFM'
     }
 
     stages {
