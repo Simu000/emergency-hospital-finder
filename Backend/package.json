@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-     "test": "node -e \"console.log('Tests passed!')\" || true",
-    "start": "node server.js",
-    "lint": "eslint . --fix || true"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "npx eslint . --cache --cache-location node_modules/.cache/eslint/ || true"
   },
   "dependencies": {
     "cors": "^2.8.6",
