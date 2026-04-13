@@ -5,40 +5,35 @@ pipeline {
         DOCKER_IMAGE = 'simu2006/hospital-finder'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         CLAW_URL = 'https://irkihajmnyme.ap-southeast-1.clawcloudrun.com'
+        DOCKER_PAT = 'dckr_pat_5TZAnbVJEfWBUWQbf9ae6gSeadc'
     }
 
     stages {
-        // STAGE 1: BUILD - Create Docker image artifact
         stage('Build') {
             steps {
                 echo '🔨 Building application and creating Docker image...'
-                
                 dir('Backend') {
                     bat 'npm install'
                 }
-                
                 dir('Frontend') {
                     bat 'npm install'
                     bat 'npm run build'
                 }
-                
                 bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} -t ${DOCKER_IMAGE}:latest ."
-                echo '✅ Build stage completed - Docker image created'
+                echo '✅ Build stage completed'
             }
         }
         
-        // STAGE 2: TEST - Run automated tests
         stage('Test') {
             steps {
                 echo '🧪 Running automated tests...'
                 dir('Backend') {
                     bat 'npm test'
                 }
-                echo '✅ Test stage completed - All tests passed'
+                echo '✅ Test stage completed'
             }
         }
         
-        // STAGE 3: CODE QUALITY - ESLint analysis
         stage('Code Quality') {
             steps {
                 echo '📊 Running code quality analysis (ESLint)...'
@@ -49,75 +44,50 @@ pipeline {
             }
         }
         
-        // STAGE 4: SECURITY - Trivy vulnerability scan
         stage('Security') {
             steps {
                 echo '🔒 Running security vulnerability scan with Trivy...'
-                script {
-                    // Use local Trivy installation
-                    bat 'C:\\trivy\\trivy.exe image --severity HIGH,CRITICAL --exit-code 0 simu2006/hospital-finder:latest || echo "Scan completed with findings"'
-                    echo '✅ Security stage completed - Trivy scan finished'
-                }
-            }
-        }
-        stages {
-        stage('Direct Docker Login Test') {
-            steps {
-                bat '''
-                    echo dckr_pat_5TZAnbVJEfWBUWQbf9ae6gSeadc | docker login -u simu2006 --password-stdin
-                    echo Exit code: %errorlevel%
-                    docker logout
-                '''
-                }
+                bat 'C:\\trivy\\trivy.exe image --severity HIGH,CRITICAL --exit-code 0 simu2006/hospital-finder:latest || echo "Scan completed"'
+                echo '✅ Security stage completed'
             }
         }
         
-        
-        // STAGE 5: DEPLOY - Deploy to Docker Hub (staging)
         stage('Deploy') {
             steps {
                 echo '🚀 Deploying to Docker Hub registry...'
-                
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-credentials',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    bat '''
-                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
-                        docker push simu2006/hospital-finder:latest
-                        docker push simu2006/hospital-finder:%BUILD_NUMBER%
-                    '''
+                script {
+                    bat """
+                        echo ${DOCKER_PAT} | docker login -u simu2006 --password-stdin
+                        docker push ${DOCKER_IMAGE}:latest
+                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        docker logout
+                    """
                 }
                 echo '✅ Deploy stage completed - Image pushed to Docker Hub'
             }
         }
         
-        // STAGE 6: RELEASE - Promote to production with git tag
         stage('Release') {
             steps {
                 echo '📦 Creating production release...'
                 script {
                     def releaseTag = "release-${env.BUILD_NUMBER}"
                     bat "git tag ${releaseTag}"
-                    bat "git push origin ${releaseTag} || echo 'Tag already exists'"
+                    bat "git push origin ${releaseTag} || echo 'Tag push skipped'"
                     
-                    // Create release notes
                     def releaseNotes = """
                     Release: ${releaseTag}
                     Image: ${DOCKER_IMAGE}:${DOCKER_TAG}
                     Deployed to: ${CLAW_URL}
                     Date: ${new Date()}
-                    Stages Completed: Build, Test, Code Quality, Security, Deploy, Release, Monitoring
                     """
                     writeFile file: 'release-notes.txt', text: releaseNotes
                     archiveArtifacts artifacts: 'release-notes.txt'
                 }
-                echo '✅ Release stage completed - Production release created'
+                echo '✅ Release stage completed'
             }
         }
         
-        // STAGE 7: MONITORING - Health check and alerting
         stage('Monitoring') {
             steps {
                 echo '📈 Monitoring production application...'
@@ -145,7 +115,6 @@ pipeline {
                         }
                     }
                     
-                    // Generate monitoring report
                     def monitoringReport = """
                     ========================================
                     MONITORING & ALERTING REPORT
@@ -161,8 +130,6 @@ pipeline {
                     
                     Alert Rules:
                     - If status != "ok" → Alert triggered
-                    - If response time > 5s → Alert triggered
-                    
                     ========================================
                     """
                     
@@ -175,44 +142,6 @@ pipeline {
                 }
                 echo '✅ Monitoring stage completed'
             }
-        }
-    }
-    
-    post {
-        success {
-            echo '''
-            ═══════════════════════════════════════════════════════════
-            🎉 PIPELINE EXECUTED SUCCESSFULLY! 🎉
-            ═══════════════════════════════════════════════════════════
-            
-            ✅ Build Stage        - Docker image created
-            ✅ Test Stage         - All tests passed  
-            ✅ Code Quality Stage - ESLint analysis done
-            ✅ Security Stage     - Trivy scan completed
-            ✅ Deploy Stage       - Pushed to Docker Hub
-            ✅ Release Stage      - Production release tagged
-            ✅ Monitoring Stage   - Health checks passing
-            
-            🌐 Application URL: https://irkihajmnyme.ap-southeast-1.clawcloudrun.com
-            🐳 Docker Hub: https://hub.docker.com/r/simu2006/hospital-finder
-            
-            ═══════════════════════════════════════════════════════════
-            '''
-        }
-        failure {
-            echo '''
-            ❌ PIPELINE FAILED! ❌
-            
-            Check console output for detailed error messages.
-            
-            Common issues:
-            1. Docker daemon running?
-            2. Docker Hub credentials configured?
-            3. Internet connection for npm install?
-            4. Claw.cloud endpoint accessible?
-            
-            Review logs above and fix the issue before rebuilding.
-            '''
         }
     }
 }
