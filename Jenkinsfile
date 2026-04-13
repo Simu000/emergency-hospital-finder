@@ -53,8 +53,15 @@ pipeline {
         stage('Security') {
             steps {
                 echo '🔒 Running security vulnerability scan...'
-                bat "docker run --rm aquasec/trivy:latest image --severity HIGH,CRITICAL --exit-code 0 ${DOCKER_IMAGE}:latest || echo 'Scan completed with findings'"
-                echo '✅ Security stage completed - No critical vulnerabilities found'
+                script {
+                    // Pull the known good version (0.69.3)
+                    bat 'docker pull aquasec/trivy:0.69.3 || echo "Pull failed"'
+                    
+                    // Scan your image
+                    bat "docker run --rm aquasec/trivy:0.69.3 image --severity HIGH,CRITICAL --exit-code 0 ${DOCKER_IMAGE}:latest || echo 'Scan completed'"
+                    
+                    echo '✅ Security stage completed'
+                }
             }
         }
         
