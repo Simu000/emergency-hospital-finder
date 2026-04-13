@@ -60,6 +60,19 @@ pipeline {
                 }
             }
         }
+        stages {
+        stage('Direct Docker Login Test') {
+            steps {
+                bat '''
+                    echo dckr_pat_5TZAnbVJEfWBUWQbf9ae6gSeadc | docker login -u simu2006 --password-stdin
+                    echo Exit code: %errorlevel%
+                    docker logout
+                '''
+                }
+            }
+        }
+        
+        
         // STAGE 5: DEPLOY - Deploy to Docker Hub (staging)
         stage('Deploy') {
             steps {
