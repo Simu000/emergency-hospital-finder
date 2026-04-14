@@ -22,3 +22,66 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# PS C:\Users\Acer\Desktop\PrototypePRODEV> git add .                             
+# PS C:\Users\Acer\Desktop\PrototypePRODEV> git commit -m "h"                     
+# [main 2a75a79] h
+#  1 file changed, 2 insertions(+), 2 deletions(-)
+# PS C:\Users\Acer\Desktop\PrototypePRODEV> git push origin main                  
+# Enumerating objects: 9, done.
+# Counting objects: 100% (9/9), done.
+# Delta compression using up to 8 threads
+# Compressing objects: 100% (5/5), done.
+# Writing objects: 100% (5/5), 504 bytes | 100.00 KiB/s, done.
+# Total 5 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+# remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+# To https://github.com/Simu000/emergency-hospital-finder.git
+#    efab1d8..2a75a79  main -> main
+# PS C:\Users\Acer\Desktop\PrototypePRODEV> docker build -t simu2006/hospital-finder:latest .
+# [+] Building 9.6s (19/19) FINISHED docke
+#  => [internal] load build definit  0.0s
+#  => => transferring docker 1.09kB  0.0s
+#  => [internal] load metadata for   2.8s
+#  => [auth] library/node:pull toke  0.0s
+#  => [internal] load .dockerignore  0.1s
+#  => => transferring context: 159B  0.0s
+#  => [frontend-builder 1/7] FROM d  0.1s
+#  => => resolve docker.io/library/  0.1s
+#  => [internal] load build context  0.0s
+#  => => transferring contex 8.82kB  0.0s
+#  => CACHED [frontend-builder 2/7]  0.0s
+#  => CACHED [frontend-builder 3/7]  0.0s
+#  => CACHED [frontend-builder 4/7]  0.0s
+#  => CACHED [frontend-builder 5/7]  0.0s
+#  => [frontend-builder 6/7] COPY F  0.1s
+#  => [frontend-builder 7/7] RUN np  4.3s
+#  => CACHED [stage-1 2/7] WORKDIR   0.0s 
+#  => CACHED [stage-1 3/7] COPY Bac  0.0s 
+#  => CACHED [stage-1 4/7] COPY Bac  0.0s
+#  => CACHED [stage-1 5/7] RUN npm   0.0s
+#  => CACHED [stage-1 6/7] COPY Bac  0.0s
+#  => [stage-1 7/7] COPY --from=fro  0.1s
+#  => exporting to image             1.0s
+#  => => exporting layers            0.4s
+#  => => exporting manifest sha256:  0.0s
+#  => => exporting config sha256:ba  0.0s
+#  => => exporting attestation mani  0.1s
+#  => => exporting manifest list sh  0.1s
+#  => => naming to docker.io/simu20  0.0s
+#  => => unpacking to docker.io/sim  0.1s
+# PS C:\Users\Acer\Desktop\PrototypePRODEV> docker push simu2006/hospital-finder:latest      
+# The push refers to repository [docker.io/simu2006/hospital-finder]
+# 5c0b4922ba44: Pushed 
+# 589002ba0eae: Layer already exists 
+# 4f4fb700ef54: Layer already exists 
+# f7ee83668a94: Layer already exists 
+# 67fd0e0405c9: Layer already exists 
+# 7ac107224afb: Layer already exists 
+# 40ab485b28ea: Layer already exists 
+# 43fd9b73af25: Layer already exists 
+# 1a1d04e585b7: Pushed 
+# 087b41e5c641: Layer already exists 
+# f80fcdf08ee5: Layer already exists 
+# latest: digest: sha256:9b0a09b7ffad915599341680e73170d452e5f65f5483f4ae07acf56b45254585 size: 856
+# PS C:\Users\Acer\Desktop\PrototypePRODEV> 
