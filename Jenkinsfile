@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo '🔨 Building application...'
+                echo 'Building application...'
                 dir('Backend') {
                     bat 'npm install'
                 }
@@ -20,41 +20,41 @@ pipeline {
                     bat 'npm run build'
                 }
                 bat "docker build -t ${DOCKER_IMAGE}:latest -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
-                echo '✅ Build completed'
+                echo 'Build completed'
             }
         }
         
         stage('Test') {
             steps {
-                echo '🧪 Running tests...'
+                echo ' Running tests...'
                 dir('Backend') {
                     bat 'npm test'
                 }
-                echo '✅ Tests passed'
+                echo ' Tests passed'
             }
         }
         
         stage('Code Quality') {
             steps {
-                echo '📊 Code quality analysis...'
+                echo ' Code quality analysis...'
                 dir('Backend') {
                     bat 'npm run lint || echo "Lint completed"'
                 }
-                echo '✅ Code quality done'
+                echo ' Code quality done'
             }
         }
         
         stage('Security') {
             steps {
-                echo '🔒 Security scan...'
+                echo ' Security scan...'
                 bat 'C:\\trivy\\trivy.exe image --severity HIGH,CRITICAL --exit-code 0 simu2006/hospital-finder-app:latest || echo "Scan completed"'
-                echo '✅ Security done'
+                echo ' Security done'
             }
         }
         
         stage('Deploy') {
             steps {
-                echo '🚀 Deploying to Docker Hub...'
+                echo ' Deploying to Docker Hub...'
                 script {
                     bat """
                         echo ${DOCKER_PAT} | docker login -u ${DOCKER_USER} --password-stdin
@@ -64,16 +64,15 @@ pipeline {
                         echo Push completed
                     """
                 }
-                echo '✅ Deploy completed'
+                echo ' Deploy completed'
             }
         }
         
         stage('Release') {
             steps {
-                echo '📦 Creating release notes...'
+                echo ' Creating release notes...'
                 script {
                     def releaseTag = "release-${env.BUILD_NUMBER}"
-                    // Skip git tag push - just create release notes
                     writeFile file: 'release-notes.txt', text: """
                         Release: ${releaseTag}
                         Image: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
@@ -82,19 +81,19 @@ pipeline {
                     """
                     archiveArtifacts artifacts: 'release-notes.txt'
                 }
-                echo '✅ Release completed'
+                echo ' Release completed'
             }
         }
         
         stage('Monitoring') {
             steps {
-                echo '📈 Health check simulation...'
+                echo 'Health check simulation...'
                 script {
                     echo "Monitoring: Application deployed as Docker image ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
                     echo "Health check: ${CLAW_URL}/api/health - Verify manually"
-                    echo "✅ Monitoring check completed"
+                    echo " Monitoring check completed"
                 }
-                echo '✅ Monitoring completed'
+                echo 'Monitoring completed'
             }
         }
     }
