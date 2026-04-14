@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'simu2006/hospital-finder-app'
+        DOCKER_IMAGE = 'simu2006/hospital-finder'
         CLAW_URL = 'https://irkihajmnyme.ap-southeast-1.clawcloudrun.com'
         DOCKER_PAT = 'dckr_pat_oQy61sW6s3Vcjh8tziwJmDzMhFM'
         DOCKER_USER = 'simu2006'
