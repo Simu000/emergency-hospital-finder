@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Mock hospital data generator
 function generateMockHospitals() {
@@ -19,7 +19,7 @@ function generateMockHospitals() {
       id: i,
       name: `Hospital ${i}`,
       availableBeds: Math.floor(Math.random() * 50),
-      emergencyContact: `+91-98${Math.floor(10000000 + Math.random() * 90000000)}`
+      emergencyContact: `+91-98${Math.floor(10000000 + Math.random() * 90000000)}`,
     });
   }
   return hospitals;
@@ -35,8 +35,8 @@ app.get("/api/health", (req, res) => {
 });
 
 // Serve React app for all other routes
-app.get('*path', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(PORT, () => {
