@@ -35,7 +35,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // Serve React app for all other routes - FIXED for new path-to-regexp
-app.get('/*path', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
