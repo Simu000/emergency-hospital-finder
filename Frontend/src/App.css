@@ -937,7 +937,7 @@ body {
 
 /* Marker custom styles */
 .custom-marker {
-  border-radius: 50%;
+  border-radius: 51%;
   display: flex;
   align-items: center;
   justify-content: center;
