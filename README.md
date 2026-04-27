@@ -116,3 +116,4 @@ npm install
 npm run dev
 
 ```
+check it out: https://hisrkcwvjxat.ap-southeast-1.clawcloudrun.com
