@@ -28,7 +28,7 @@ pipeline {
             steps {
                 echo ' Running tests...'
                 dir('Backend') {
-                    bat 'npm test || echo "Tests completed"'
+                    bat 'npm test'
                 }
                 echo ' Tests passed'
             }
