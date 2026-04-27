@@ -8,8 +8,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files
+// ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, "public")));
+
+// ------------------ API ROUTES ------------------
 
 // Mock hospital data generator
 function generateMockHospitals() {
@@ -25,7 +27,6 @@ function generateMockHospitals() {
   return hospitals;
 }
 
-// API endpoints
 app.get("/hospitals/mock", (req, res) => {
   res.json(generateMockHospitals());
 });
@@ -34,10 +35,14 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Serve React app for all other routes - FIXED for new path-to-regexp
+// ------------------ FRONTEND FALLBACK ------------------
+
+
 app.get(/(.*)/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+
+// ------------------ SERVER START ------------------
 
 if (require.main === module) {
   app.listen(PORT, () => {
